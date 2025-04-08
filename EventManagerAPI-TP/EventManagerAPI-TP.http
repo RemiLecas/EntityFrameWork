@@ -1,0 +1,6 @@
+@EventManagerAPI_TP_HostAddress = http://localhost:5257
+
+GET {{EventManagerAPI_TP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

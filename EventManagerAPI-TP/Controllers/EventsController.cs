@@ -82,7 +82,7 @@ namespace EventManagerAPI.Controllers
                         }).ToList()
                     }).ToList(),
 
-                    Participants = e.EventParticipants.Select(ep => new ParticipantDTO
+                    Participants = e.EventParticipants.Select(ep => new ParticipantReadDTO
                     {
                         Id = ep.Participant.Id,
                         FirstName = ep.Participant.FirstName,
@@ -134,7 +134,7 @@ namespace EventManagerAPI.Controllers
                         Bio = ss.Speaker.Bio
                     }).ToList()
                 }).ToList(),
-                Participants = @event.EventParticipants.Select(ep => new ParticipantDTO
+                Participants = @event.EventParticipants.Select(ep => new ParticipantReadDTO
                 {
                     Id = ep.Participant.Id,
                     FirstName = ep.Participant.FirstName,

@@ -19,7 +19,7 @@ public class EventReadDTO
 
     public string LocationName { get; set; } = string.Empty;
     public List<SessionDTO> Sessions { get; set; } = new();
-    public List<ParticipantDTO> Participants { get; set; } = new();
+    public List<ParticipantReadDTO> Participants { get; set; } = new();
 }
 
 public class EventUpdateDTO

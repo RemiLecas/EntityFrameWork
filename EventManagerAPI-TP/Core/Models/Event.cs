@@ -11,8 +11,8 @@ public class Event
     public int LocationId { get; set; }
     public Location? Location { get; set; }
 
-    public ICollection<EventParticipant>? EventParticipants { get; set; }
-    public ICollection<Session>? Sessions { get; set; }
+    public ICollection<EventParticipant> EventParticipants { get; set; } = new List<EventParticipant>();
+    public ICollection<Session> Sessions { get; set; } = new List<Session>();
 }
 
 public enum EventStatus

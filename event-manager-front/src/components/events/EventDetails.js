@@ -22,10 +22,16 @@ const EventDetail = () => {
     navigate('/');
   };
 
+  const handleModif = () => {
+    navigate(`/events/edit/${id}`)
+  };
+
   if (!event) return <div>Chargement...</div>;
 
   return (
     <div className="event-detail">
+      <button onClick={handleModif}>Modifier</button>
+
       <h2>{event.title}</h2>
       <p>{event.description}</p>
 

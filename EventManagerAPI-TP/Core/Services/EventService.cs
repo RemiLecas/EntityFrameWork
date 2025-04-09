@@ -130,7 +130,7 @@ public class EventService : IEventService
     }
 
 
-    public async Task<EventReadDTO> GetEventByIdAsync(int id)
+    public async Task<EventReadDTO> GetEventByIdAsync(int eventId)
     {
         var @event = await _context.Events
             .Include(e => e.Location)
@@ -142,12 +142,11 @@ public class EventService : IEventService
                     .ThenInclude(ss => ss.Speaker)
             .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.Participant)
-            .FirstOrDefaultAsync(e => e.Id == id);
+            .FirstOrDefaultAsync(e => e.Id == eventId);
 
         if (@event == null)
             return null;
 
-        // Création du DTO pour renvoyer toutes les informations
         return new EventReadDTO
         {
             Id = @event.Id,
@@ -170,7 +169,7 @@ public class EventService : IEventService
                 Country = @event.Location.Country,
                 Capacity = @event.Location.Capacity
             } : null,
-            Sessions = @event.Sessions?.Select(s => new SessionReadDTO
+            Sessions = @event.Sessions.Select(s => new SessionReadDTO
             {
                 Id = s.Id,
                 Title = s.Title,
@@ -178,23 +177,24 @@ public class EventService : IEventService
                 StartTime = s.StartTime,
                 EndTime = s.EndTime,
                 RoomName = s.Room?.Name ?? "Unknown",
-                Speakers = s.SessionSpeakers?.Select(ss => new SpeakerReadDTO
+                Speakers = s.SessionSpeakers.Select(ss => new SpeakerReadDTO
                 {
                     Id = ss.Speaker.Id,
                     FirstName = ss.Speaker.FirstName,
                     LastName = ss.Speaker.LastName,
                     Company = ss.Speaker.Company
-                }).ToList() ?? new List<SpeakerReadDTO>()
-            }).ToList() ?? new List<SessionReadDTO>(),
-            Participants = @event.EventParticipants?.Select(ep => new ParticipantReadDTO
+                }).ToList()
+            }).ToList(),
+            Participants = @event.EventParticipants.Select(ep => new ParticipantReadDTO
             {
                 Id = ep.Participant.Id,
                 FirstName = ep.Participant.FirstName,
                 LastName = ep.Participant.LastName,
                 Email = ep.Participant.Email
-            }).ToList() ?? new List<ParticipantReadDTO>()
+            }).ToList()
         };
     }
+
 
 
     public async Task<bool> UpdateEventAsync(int id, EventUpdateDTO eventUpdateDTO)

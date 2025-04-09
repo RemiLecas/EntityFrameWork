@@ -59,9 +59,35 @@ const EventForm = () => {
 
         if (id) {
           const eventData = await eventService.getEvent(id);
-          setEvent(eventData);
-          if (eventData.locationId) {
-            filterRoomsByLocation(eventData.locationId);
+          if (eventData) {
+            const formattedStartDate = eventData.startDate ? eventData.startDate.slice(0, 16) : '';
+            const formattedEndDate = eventData.endDate ? eventData.endDate.slice(0, 16) : '';
+
+            const selectedLocation = locations.find(location => location.id === event.locationId);
+            const roomId = selectedLocation ? selectedLocation.rooms[0]?.id : 0;
+            if(selectedLocation) {
+              setFilteredRooms(selectedLocation.rooms);
+            }
+
+            setEvent({
+              title: eventData.title || '',
+              description: eventData.description || '',
+              startDate: formattedStartDate,
+              endDate: formattedEndDate,
+              status: eventData.status || 0,
+              categoryId: eventData.category?.id || '',
+              locationId: eventData.location?.id || '',
+              roomId: roomId,
+              roomName: eventData.sessions[0]?.roomName || '',
+              participantIds: eventData.participants?.map(p => p.id) || [], // Liste des participants
+              speakerIds: eventData.speakers?.map(s => s.id) || [], // Liste des speakers
+              sessionIds: eventData.sessions?.map(s => s.id) || [], // Liste des sessions
+            });
+
+            console.log(event)
+            if (eventData.locationId) {
+              filterRoomsByLocation(eventData.locationId);
+            }
           }
         }
 
@@ -86,6 +112,7 @@ const EventForm = () => {
   const filterRoomsByLocation = (selectedLocationId) => {
     const selectedLocation = locations.find(location => location.id === Number(selectedLocationId));
     setFilteredRooms(selectedLocation.rooms);
+
   };
   
   const handleChange = (e) => {

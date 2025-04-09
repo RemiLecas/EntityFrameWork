@@ -6,7 +6,7 @@ public class Location
     public string City { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
     public int Capacity { get; set; }
-
+    public string ZipCode { get; set; } = string.Empty;
     public ICollection<Room>? Rooms { get; set; }
     public ICollection<Event>? Events { get; set; }
 }

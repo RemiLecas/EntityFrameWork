@@ -6,6 +6,5 @@ public class Room
 
     public int LocationId { get; set; }
     public Location? Location { get; set; }
-
     public ICollection<Session>? Sessions { get; set; }
 }

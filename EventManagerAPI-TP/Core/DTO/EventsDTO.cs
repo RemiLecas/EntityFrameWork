@@ -5,8 +5,10 @@ public class EventCreateDTO
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Status { get; set; }
-    public int Category { get; set; }
+    public int CategoryId { get; set; }
     public int LocationId { get; set; }
+    public List<int>? SessionIds { get; set; } = new List<int>();
+    public int RoomId { get; set; }
 }
 
 public class EventReadDTO
@@ -16,10 +18,11 @@ public class EventReadDTO
     public string? Description { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-
-    public string LocationName { get; set; } = string.Empty;
-    public List<SessionDTO> Sessions { get; set; } = new();
-    public List<ParticipantReadDTO> Participants { get; set; } = new();
+    public int Status { get; set; }
+    public CategoryReadDTO Category { get; set; }
+    public LocationReadDTO Location { get; set; } = new LocationReadDTO();
+    public List<SessionReadDTO> Sessions { get; set; } = new List<SessionReadDTO>();
+    public List<ParticipantReadDTO> Participants { get; set; } = new List<ParticipantReadDTO>();
 }
 
 public class EventUpdateDTO
@@ -29,6 +32,7 @@ public class EventUpdateDTO
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Status { get; set; }
-    public int Category { get; set; }
+    public int CategoryId { get; set; }
     public int LocationId { get; set; }
+    public List<int>? SessionIds { get; set; } = new List<int>();
 }

@@ -2,117 +2,59 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
 
-namespace EventManagerAPI.Controllers;
-
-[Route("api/participants")]
 [ApiController]
+[Route("api/[controller]")]
 public class ParticipantsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IParticipantsService _participantService;
 
-    public ParticipantsController(ApplicationDbContext context)
+    public ParticipantsController(IParticipantsService participantService)
     {
-        _context = context;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<Participant>> CreateParticipant(ParticipantCreateDTO participantDTO)
-    {
-        var participant = new Participant
-        {
-            FirstName = participantDTO.FirstName,
-            LastName = participantDTO.LastName,
-            Email = participantDTO.Email,
-            Company = participantDTO.Company,
-            JobTitle = participantDTO.JobTitle
-        };
-
-        _context.Participants.Add(participant);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetParticipant), new { id = participant.Id }, participant);
+        _participantService = participantService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Participant>>> GetParticipants()
+    public async Task<IActionResult> GetAll()
     {
-        var participants = await _context.Participants.ToListAsync();
+        var participants = await _participantService.GetAllParticipantsAsync();
         return Ok(participants);
     }
 
-    // Récupérer un participant par ID
     [HttpGet("{id}")]
-    public async Task<ActionResult<Participant>> GetParticipant(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var participant = await _context.Participants.FindAsync(id);
-
+        var participant = await _participantService.GetParticipantByIdAsync(id);
         if (participant == null)
-        {
             return NotFound();
-        }
 
         return Ok(participant);
     }
 
-    // Mettre à jour un participant
+    [HttpPost]
+    public async Task<IActionResult> Create(ParticipantCreateDTO dto)
+    {
+        var created = await _participantService.CreateParticipantAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    }
+
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateParticipant(int id, ParticipantUpdateDTO participantDTO)
+    public async Task<IActionResult> Update(int id, ParticipantUpdateDTO dto)
     {
-        var participant = await _context.Participants.FindAsync(id);
-
-        if (participant == null)
-        {
-            return NotFound();
-        }
-
-        participant.FirstName = participantDTO.FirstName;
-        participant.LastName = participantDTO.LastName;
-        participant.Email = participantDTO.Email;
-        participant.Company = participantDTO.Company;
-        participant.JobTitle = participantDTO.JobTitle;
-
-        _context.Entry(participant).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ParticipantExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        var updated = await _participantService.UpdateParticipantAsync(id, dto);
+        return updated ? NoContent() : NotFound();
     }
 
-    // Supprimer un participant
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteParticipant(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var participant = await _context.Participants.FindAsync(id);
-
-        if (participant == null)
-        {
-            return NotFound();
-        }
-
-        _context.Participants.Remove(participant);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        var deleted = await _participantService.DeleteParticipantAsync(id);
+        return deleted ? NoContent() : NotFound();
     }
 
-    // Vérifier si un participant existe
-    private bool ParticipantExists(int id)
+    [HttpGet("{id}/events")]
+    public async Task<IActionResult> GetEventHistory(int id)
     {
-        return _context.Participants.Any(e => e.Id == id);
+        var history = await _participantService.GetEventHistoryByParticipantAsync(id);
+        return Ok(history);
     }
-
 }

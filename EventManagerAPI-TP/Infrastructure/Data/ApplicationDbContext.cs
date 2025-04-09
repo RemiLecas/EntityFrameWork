@@ -19,6 +19,8 @@ namespace Infrastructure.Data
 
         public DbSet<Rating> Ratings { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -26,24 +28,25 @@ namespace Infrastructure.Data
             // Event
             modelBuilder.Entity<Event>(entity =>
             {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.Description).HasMaxLength(1000);
-                entity.Property(e => e.StartDate).IsRequired();
-                entity.Property(e => e.EndDate).IsRequired();
+                  entity.HasKey(e => e.Id);
+                  entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                  entity.Property(e => e.Description).HasMaxLength(1000);
+                  entity.Property(e => e.StartDate).IsRequired();
+                  entity.Property(e => e.EndDate).IsRequired();
 
-                entity.Property(e => e.Status)
+                  entity.Property(e => e.Status)
                       .HasConversion<string>()
                       .HasDefaultValue(EventStatus.Planned);
 
-                entity.Property(e => e.Category)
-                      .HasConversion<string>()
-                      .HasDefaultValue(EventCategory.Other);
+                  entity.HasOne(e => e.Category)
+                        .WithMany(c => c.Events)
+                        .HasForeignKey(e => e.CategoryId)
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Location)
-                      .WithMany(l => l.Events)
-                      .HasForeignKey(e => e.LocationId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                  entity.HasOne(e => e.Location)
+                        .WithMany(l => l.Events)
+                        .HasForeignKey(e => e.LocationId)
+                        .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Participant

@@ -1,0 +1,18 @@
+# Ignorer les dossiers bin et obj (recommandé pour tous les projets .NET)
+EventManagerAPI-TP/bin/
+EventManagerAPI-TP/obj/
+
+# Ignorer tous les fichiers dans les répertoires Migrations
+EventManagerAPI-TP/Migrations/*
+
+# Ignorer les fichiers de build générés (DLL, EXE, PDB, etc.)
+EventManagerAPI-TP/*.dll
+EventManagerAPI-TP/*.exe
+EventManagerAPI-TP/*.pdb
+EventManagerAPI-TP/*.cache
+EventManagerAPI-TP/*.json
+
+# Ignorer les fichiers de source linking et autres fichiers temporaires
+EventManagerAPI-TP/obj/Debug/net8.0/*.json
+EventManagerAPI-TP/obj/Debug/net8.0/*.dll
+EventManagerAPI-TP/obj/Debug/net8.0/*.pdb

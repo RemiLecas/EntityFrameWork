@@ -12,24 +12,28 @@ public class EventService : IEventService
 
     public async Task<Event> CreateEventAsync(EventCreateDTO dto)
     {
+        // Vérification de l'existence de la location
         var location = await _context.Locations.FindAsync(dto.LocationId);
         if (location == null)
         {
             throw new ArgumentException("Location not found");
         }
 
+        // Vérification de l'existence de la room
         var room = await _context.Rooms.FindAsync(dto.RoomId);
         if (room == null)
         {
             throw new ArgumentException("Room not found");
         }
 
+        // Vérification de l'existence de la category
         var category = await _context.Categories.FindAsync(dto.CategoryId);
         if (category == null)
         {
             throw new ArgumentException("Category not found");
         }
 
+        // Création de l'événement
         var @event = new Event
         {
             Title = dto.Title,
@@ -42,13 +46,19 @@ public class EventService : IEventService
             RoomId = dto.RoomId,
         };
 
-        // Ajouter les participants
+        // Ajouter les participants à l'événement si la liste n'est pas vide
         if (dto.ParticipantIds != null && dto.ParticipantIds.Any())
         {
             var participants = await _context.Participants
                 .Where(p => dto.ParticipantIds.Contains(p.Id))
                 .ToListAsync();
             
+            // Vérifier que tous les participants sont trouvés
+            if (participants.Count != dto.ParticipantIds.Count)
+            {
+                throw new ArgumentException("One or more participant IDs not found");
+            }
+
             foreach (var participant in participants)
             {
                 @event.EventParticipants.Add(new EventParticipant
@@ -60,37 +70,59 @@ public class EventService : IEventService
             }
         }
 
-        // Ajouter les sessions
+        // Ajouter les sessions à l'événement si la liste n'est pas vide
         if (dto.SessionIds != null && dto.SessionIds.Any())
         {
             var sessions = await _context.Sessions
                 .Where(s => dto.SessionIds.Contains(s.Id))
                 .ToListAsync();
             
+            // Vérifier que toutes les sessions sont trouvées
+            if (sessions.Count != dto.SessionIds.Count)
+            {
+                throw new ArgumentException("One or more session IDs not found");
+            }
+
             foreach (var session in sessions)
             {
                 @event.Sessions.Add(session);
 
-                // Ajouter les speakers à chaque session
                 if (dto.SpeakerIds != null && dto.SpeakerIds.Any())
                 {
                     var speakers = await _context.Speakers
                         .Where(sp => dto.SpeakerIds.Contains(sp.Id))
                         .ToListAsync();
                     
+                    // Vérifier que tous les speakers sont trouvés
+                    if (speakers.Count != dto.SpeakerIds.Count)
+                    {
+                        throw new ArgumentException("One or more speaker IDs not found");
+                    }
+
                     foreach (var speaker in speakers)
                     {
-                        session.SessionSpeakers.Add(new SessionSpeaker
+                        // Vérifier si la combinaison SessionId et SpeakerId existe déjà
+                        var existingSessionSpeaker = await _context.SessionSpeakers
+                            .FirstOrDefaultAsync(ss => ss.SessionId == session.Id && ss.SpeakerId == speaker.Id);
+
+                        if (existingSessionSpeaker == null)
                         {
-                            SessionId = session.Id,
-                            SpeakerId = speaker.Id,
-                            Role = SpeakerRole.Speaker
-                        });
+                            // Ajouter le speaker uniquement s'il n'existe pas déjà
+                            session.SessionSpeakers.Add(new SessionSpeaker
+                            {
+                                SessionId = session.Id,
+                                SpeakerId = speaker.Id,
+                                Role = SpeakerRole.Speaker
+                            });
+                        }
                     }
                 }
             }
+
+
         }
 
+        // Ajouter l'événement dans le contexte et sauvegarder les changements
         _context.Events.Add(@event);
         await _context.SaveChangesAsync();
 

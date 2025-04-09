@@ -7,6 +7,7 @@ import { getParticipants } from '../services/participantService';
 import { getSpeakers } from '../services/speakerService';
 import { getRooms } from '../services/roomService';
 import { createSession, getSessionById } from '../services/sessionService';
+import { getSessions } from '../services/sessionService';
 
 import eventService from '../services/eventService';
 import './eventForm.css';
@@ -19,12 +20,13 @@ const EventForm = () => {
     description: '',
     startDate: '',
     endDate: '',
-    status: 0, // "Planned"
+    status: 0,
     categoryId: '',
     locationId: '',
     roomId: '',
     participantIds: [],
     speakerIds: [],
+    sessionIds: [],
   });
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -33,7 +35,7 @@ const EventForm = () => {
   const [error, setError] = useState('');
   const [filteredRooms, setFilteredRooms] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const [sessions, setSessions] = useState([]);  // Assurez-vous que sessions est bien défini ici
+  const [sessions, setSessions] = useState([]);
   const [sessionId, setSessionId] = useState(null);
 
   useEffect(() => {
@@ -45,6 +47,7 @@ const EventForm = () => {
           getParticipants(),
           getSpeakers(),
           getRooms(),
+          getSessions(),
         ]);
 
         setCategories(categoriesData);
@@ -52,18 +55,13 @@ const EventForm = () => {
         setParticipants(participantsData);
         setSpeakers(speakersData);
         setRooms(roomsData);
-        setSessions(sessionsData); // L'ajout des sessions ici
+        setSessions(sessionsData);
 
         if (id) {
           const eventData = await eventService.getEvent(id);
           setEvent(eventData);
           if (eventData.locationId) {
             filterRoomsByLocation(eventData.locationId);
-          }
-
-          if (eventData.sessionIds && eventData.sessionIds.length > 0) {
-            const sessionId = eventData.sessionIds[0];
-            const sessionData = await getSessionById(sessionId);
           }
         }
 
@@ -101,30 +99,8 @@ const EventForm = () => {
     });
   };
 
-  const handleCreateSession = async () => {
-    const newSession = {
-      title: event.title,  // Utilisez les données de l'événement pour créer la session
-      description: event.description,
-      startDate: event.startDate,
-      endDate: event.endDate,
-    };
-
-    try {
-      const createdSession = await createSession(newSession);
-      setSessionId(createdSession.id);
-      alert('Session créée avec succès!');
-    } catch (error) {
-      console.error('Erreur lors de la création de la session', error);
-      setError('Erreur lors de la création de la session');
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!sessionId) {
-      await handleCreateSession(); // Créer la session si elle n'existe pas
-    }
 
     const eventData = {
       title: event.title,
@@ -135,9 +111,9 @@ const EventForm = () => {
       categoryId: event.categoryId,
       locationId: event.locationId,
       roomId: event.roomId,
-      participantIds: event.participantIds,
-      speakerIds: event.speakerIds,
-      sessionIds: sessionId ? [sessionId] : [], // Assurez-vous d'envoyer l'ID de la session
+      participantIds: event.participantIds.map(Number),
+      speakerIds: event.speakerIds.map(Number),
+      sessionIds: event.sessionIds.map(Number),
     };
 
     try {
@@ -159,8 +135,8 @@ const EventForm = () => {
         roomId: '',
         participantIds: [],
         speakerIds: [],
+        sessionIds: [],
       });
-      setSessionId(null);
       navigate('/events');
     } catch (error) {
       setError('Erreur lors de la création ou mise à jour de l\'événement');
@@ -301,19 +277,19 @@ const EventForm = () => {
           </select>
         </div>
         <div className="form-group">
-            <label>Sessions</label>
-            <select
-                multiple
-                name="sessionIds"
-                value={event.sessionIds || []}  // Assurez-vous que `sessionIds` est un tableau dans `event`
-                onChange={(e) => handleSelectChange(e, 'sessionIds')}
-            >
-                {sessions?.map((session) => (
-                <option key={session.id} value={session.id}>
-                    {session.title}
-                </option>
-                ))}
-            </select>
+          <label>Sessions</label>
+          <select
+            multiple
+            name="sessionIds"
+            value={event.sessionIds}
+            onChange={(e) => handleSelectChange(e, 'sessionIds')}
+          >
+            {sessions?.map((session) => (
+              <option key={session.id} value={session.id}>
+                {session.title}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

@@ -47,6 +47,46 @@ public class SessionService : ISessionService
         };
     }
 
+    public async Task<IEnumerable<SessionReadDTO>> GetAllSessionsAsync()
+    {
+        var sessions = await _context.Sessions
+            .Include(s => s.Event)
+            .Include(s => s.Room)
+            .Include(s => s.SessionSpeakers).ThenInclude(ss => ss.Speaker)
+            .Include(s => s.Ratings)
+            .ToListAsync();
+
+        return sessions.Select(s => new SessionReadDTO
+        {
+            Id = s.Id,
+            Title = s.Title,
+            Description = s.Description,
+            StartTime = s.StartTime,
+            EndTime = s.EndTime,
+            EventTitle = s.Event?.Title ?? "Unknown Event",
+            RoomName = s.Room?.Name ?? "Unknown Room",
+            Speakers = s.SessionSpeakers != null
+                ? s.SessionSpeakers.Select(ss => new SpeakerReadDTO
+                {
+                    Id = ss.SpeakerId,
+                    FirstName = ss.Speaker?.FirstName ?? "",
+                    LastName = ss.Speaker?.LastName ?? "",
+                    Bio = ss.Speaker?.Bio ?? "",
+                    Role = ss.Role.ToString()
+                }).ToList()
+                : new List<SpeakerReadDTO>(),
+            Ratings = s.Ratings != null
+                ? s.Ratings.Select(r => new RatingReadDTO
+                {
+                    Score = r.Score,
+                    Comment = r.Comment
+                }).ToList()
+                : new List<RatingReadDTO>()
+        });
+    }
+
+
+
     public async Task<SessionReadDTO?> GetSessionByIdAsync(int id)
     {
         var session = await _context.Sessions

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import eventService from '../services/eventService';
-import categoryService from './categoriesService';
+import categoryService from '../services/categoriesService';
 import { Link, useNavigate } from 'react-router-dom';
 import './eventList.css';
 

@@ -40,18 +40,3 @@ div {
     margin: 20px auto;
   }
   
-  /* Style pour les petits écrans */
-  @media (max-width: 600px) {
-    h2 {
-      font-size: 1.5rem;
-    }
-  
-    p {
-      font-size: 1rem;
-    }
-  
-    button {
-      font-size: 0.9rem;
-    }
-  }
-  

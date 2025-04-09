@@ -23,3 +23,9 @@ public enum EventStatus
     Canceled,
     Completed
 }
+
+public class EventListResult
+{
+    public IEnumerable<EventReadDTO> Events { get; set; }
+    public int TotalPages { get; set; }
+}

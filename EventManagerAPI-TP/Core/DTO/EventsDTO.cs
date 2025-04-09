@@ -9,6 +9,8 @@ public class EventCreateDTO
     public int LocationId { get; set; }
     public List<int>? SessionIds { get; set; } = new List<int>();
     public int RoomId { get; set; }
+    public List<int>? ParticipantIds { get; set; } = new List<int>();
+    public List<int>? SpeakerIds { get; set; } = new List<int>();
 }
 
 public class EventReadDTO

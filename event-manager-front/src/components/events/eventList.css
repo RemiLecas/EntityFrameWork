@@ -1,0 +1,88 @@
+/* EventList.css */
+
+.event-list {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0000001a;
+}
+
+.event-list h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.event-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.event-list li {
+    background-color: white;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    transition: box-shadow 0.2s;
+    border: 1px solid #ddd;
+}
+
+.event-list li:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.event-list h3 {
+    margin: 0 0 0.5rem;
+}
+
+.event-list a {
+    text-decoration: none;
+    color: #1976d2;
+    font-weight: bold;
+}
+
+.event-list a:hover {
+    text-decoration: underline;
+}
+
+.event-list p {
+    margin: 0.3rem 0;
+    color: #555;
+}
+
+.event-list .filters {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-list select,
+.event-list input {
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-right: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.event-list .pagination {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.event-list .pagination button {
+    padding: 0.6rem 1.2rem;
+    margin: 0 1rem;
+    border: none;
+    background-color: #1976d2;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.event-list .pagination button:hover {
+    background-color: #155a8a;
+}

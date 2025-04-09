@@ -4,12 +4,21 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+});
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -29,6 +38,8 @@ builder.Services.AddScoped<IParticipantsService, ParticipantService>();
 builder.Services.AddScoped<IEventParticipantsService, EventParticipantsService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
+builder.Services.AddScoped<IEventListService, EventListService>();
+
 builder.Services.AddScoped<DatabaseSeeder>();
 
 var app = builder.Build();
@@ -46,6 +57,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.MapControllers();

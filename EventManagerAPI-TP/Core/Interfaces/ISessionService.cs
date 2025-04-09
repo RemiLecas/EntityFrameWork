@@ -1,5 +1,6 @@
 public interface ISessionService
 {
+    Task<SessionReadDTO?> GetAllSessions();
     Task<SessionReadDTO> CreateSessionAsync(SessionCreateDTO dto);
     Task<SessionReadDTO?> GetSessionByIdAsync(int id);
     Task<IEnumerable<SessionReadDTO>> GetSessionsByEventAsync(int eventId);

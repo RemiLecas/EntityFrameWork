@@ -20,6 +20,16 @@ public class SessionsController : ControllerBase
         return CreatedAtAction(nameof(GetSessionById), new { id = session.Id }, session);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllSessions()
+    {
+        var session = await _sessionService.GetAllSessions();
+        if (session == null)
+            return NotFound();
+
+        return Ok(session);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSessionById(int id)
     {

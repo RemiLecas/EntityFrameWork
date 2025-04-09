@@ -6,7 +6,7 @@ public class SessionSpeaker
     public int SpeakerId { get; set; }
     public Speaker? Speaker { get; set; }
 
-    public string Role { get; set; } = string.Empty;
+    public SpeakerRole Role { get; set; }
 }
 
 public enum SpeakerRole

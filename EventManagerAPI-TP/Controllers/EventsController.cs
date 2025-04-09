@@ -7,10 +7,12 @@ using Infrastructure.Data;
 public class EventsController : ControllerBase
 {
     private readonly IEventService _eventService;
+    private readonly IEventListService _eventListService;
 
-    public EventsController(IEventService eventService, ICategoryService categoryService)
+    public EventsController(IEventService eventService, IEventListService eventListService)
     {
         _eventService = eventService;
+        _eventListService = eventListService;
     }
 
     [HttpPost]
@@ -21,13 +23,18 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EventReadDTO>>> GetEvents(
-        [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, 
-        [FromQuery] int? locationId, [FromQuery] int? category, 
-        [FromQuery] int? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<EventListResult>> GetEvents(
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        [FromQuery] int? locationId,
+        [FromQuery] int? category,
+        [FromQuery] int? status,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var events = await _eventService.GetEventsAsync(startDate, endDate, locationId, category, status, page, pageSize);
-        return Ok(events);
+        var eventListResult = await _eventListService.GetEventsAsync(startDate, endDate, locationId, category, status, page, pageSize);
+
+        return Ok(eventListResult);
     }
 
     [HttpGet("{id}")]

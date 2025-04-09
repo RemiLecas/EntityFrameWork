@@ -22,6 +22,23 @@ namespace EventManagerAPI_TP.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("Event", b =>
                 {
                     b.Property<int>("Id")
@@ -30,11 +47,8 @@ namespace EventManagerAPI_TP.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
-                        .HasDefaultValue("Other");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -44,6 +58,9 @@ namespace EventManagerAPI_TP.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -62,7 +79,11 @@ namespace EventManagerAPI_TP.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Events");
                 });
@@ -123,6 +144,10 @@ namespace EventManagerAPI_TP.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -316,13 +341,27 @@ namespace EventManagerAPI_TP.Migrations
 
             modelBuilder.Entity("Event", b =>
                 {
+                    b.HasOne("Category", "Category")
+                        .WithMany("Events")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Location", "Location")
                         .WithMany("Events")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Category");
+
                     b.Navigation("Location");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("EventParticipant", b =>
@@ -410,6 +449,11 @@ namespace EventManagerAPI_TP.Migrations
                     b.Navigation("Session");
 
                     b.Navigation("Speaker");
+                });
+
+            modelBuilder.Entity("Category", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("Event", b =>

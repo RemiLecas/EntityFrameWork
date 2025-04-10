@@ -1,6 +1,6 @@
 # Cours Entity Framework
 
-## Lancer les TPs
+## Lancer le TP EventManagerAPI-TP
 
 ### 1. Cloner le projet
 

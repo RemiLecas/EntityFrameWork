@@ -1,3 +1,5 @@
+using EventManagerAPI_TP.Core.DTO;
+
 public class LocationReadDTO
 {
     public int Id { get; set; }

@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
 using System.Text.Json.Serialization;
+using EventManagerAPI_TP.Controllers;
+using EventManagerAPI_TP.Core.DTO;
+using EventManagerAPI_TP.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

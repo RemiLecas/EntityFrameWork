@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
+using EventManagerAPI_TP.Core.DTO;
 
 public class LocationService : ILocationService
 {

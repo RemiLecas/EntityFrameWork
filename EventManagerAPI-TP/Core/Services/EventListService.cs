@@ -1,5 +1,8 @@
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using EventManagerAPI_TP.Core.Interfaces;
+using EventManagerAPI_TP.Core.DTO;
+
 
 public class EventListService : IEventListService
 {
